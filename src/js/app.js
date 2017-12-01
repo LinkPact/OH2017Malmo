@@ -1,1 +1,3 @@
-console.log('Hello world!')
+
+let hello = () => {return 'Hello world!'}
+console.log(hello())
