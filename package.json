@@ -23,5 +23,8 @@
     "babel-preset-env": "^1.6.1",
     "webpack": "^3.9.1",
     "webpack-dev-server": "^2.9.5"
+  },
+  "dependencies": {
+    "three.js": "^0.77.1"
   }
 }
