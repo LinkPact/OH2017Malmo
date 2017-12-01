@@ -1,0 +1,19 @@
+{
+  "name": "oh2017malmo",
+  "version": "0.0.1",
+  "description": "Torture map challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LinkPact/OH2017Malmo.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LinkPact/OH2017Malmo/issues"
+  },
+  "homepage": "https://github.com/LinkPact/OH2017Malmo#readme"
+}
