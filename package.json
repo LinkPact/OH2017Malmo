@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/LinkPact/OH2017Malmo/issues"
   },
-  "homepage": "https://github.com/LinkPact/OH2017Malmo#readme"
+  "scripts": {
+    "build": "webpack"
+  },
+  "homepage": "https://github.com/LinkPact/OH2017Malmo#readme",
+  "devDependencies": {
+    "webpack": "^3.9.1"
+  }
 }
