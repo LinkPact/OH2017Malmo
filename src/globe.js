@@ -79,329 +79,56 @@ var Shaders = {
 
 };
 
-var container, stats;
-var camera, scene, sceneAtmosphere, renderer;
-var vector, mesh, globeMesh, atmosphere, point, points, pointsGeometry;
-
-var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
-var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
-var distance = 1500, distanceTarget = 900;
-
-var PI_HALF = Math.PI / 2;
 
 init();
-plotData();
-animate();
+//plotData();
+
+var cube, renderer, scene, camera;
+
+//var distance = 1500, distanceTarget = 900;
+
 
 function init() {
-
-	container = document.getElementById( 'container' );
-
-	camera = new THREE.Camera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
-	camera.position.z = distance;
-
-	vector = new THREE.Vector3();
-
 	scene = new THREE.Scene();
-	sceneAtmosphere = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-	// earth
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
 
-	var geometry = new Sphere( 200, 40, 30 );
-
+	var geometry = new THREE.SphereGeometry( 200, 40, 30 );
 	var shader = Shaders[ 'earth' ];
-	var uniforms = Uniforms.clone( shader.uniforms );
+	var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-	uniforms[ 'texture' ].texture = ImageUtils.loadTexture( 'world.jpg' );
-
-	var material = new THREE.MeshShaderMaterial( {
-
-		uniforms: uniforms,
-		vertexShader: shader.vertexShader,
-		fragmentShader: shader.fragmentShader
-
-	} );
-
-	globeMesh = new THREE.Mesh( geometry, material );
-	scene.addObject( globeMesh );
-
-	// atmosphere
-
-	var shader = Shaders[ 'atmosphere' ];
-	var uniforms = Uniforms.clone( shader.uniforms );
-
-	var material = new THREE.MeshShaderMaterial( {
-
-		uniforms: uniforms,
-		vertexShader: shader.vertexShader,
-		fragmentShader: shader.fragmentShader
-
-	} );
-
-	mesh = new THREE.Mesh( geometry, material );
-	mesh.scale.x = mesh.scale.y = mesh.scale.z = 1.1;
-	mesh.flipSided = true;
-	sceneAtmosphere.addObject( mesh );
-
-	// point
-
-	geometry = new Cube( 0.75, 0.75, 1 );
-
-	for ( var i = 0; i < geometry.vertices.length; i ++ ) {
-
-		var vertex = geometry.vertices[ i ];
-		vertex.position.z += 0.5;
-
-	}
-
-	point = new THREE.Mesh( geometry );
-
-	pointsGeometry = new THREE.Geometry();
-
-	//
-
-	renderer = new THREE.WebGLRenderer( /* { antialias: false } */ );
-	renderer.autoClear = false;
-	renderer.setClearColorHex( 0x101010, 1.0 );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-
-	container.appendChild( renderer.domElement );
-
-	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
-
-	window.addEventListener( 'resize', onWindowResize, false );
-
-}
-
-function plotData() {
-
-	var lat, lng, size, color;
-
-	points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
-
-	for ( var i = 0, l = data.length; i < l; i ++ ) {
-
-		lat = data[ i ][ 1 ];
-		lng = data[ i ][ 2 ];
-		size = data[ i ][ 0 ];
-		color = new THREE.Color();
-		color.setHSV( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 );//column color
-
-		addPoint( lat, lng, size * 150, color  );//column size
-
-	}
-
-	scene.addObject( points );
-
-}
-
-function addPoint( lat, lng, size, color ) {
-
-	// if ( lat == 0 && lng == 0 ) return;
-
-	var phi = ( 90 - lat ) * Math.PI / 180;
-	var theta = ( 180 - lng ) * Math.PI / 180;
-
-	// position
-
-	point.position.x = 200 * Math.sin( phi ) * Math.cos( theta );
-	point.position.y = 200 * Math.cos( phi );
-	point.position.z = 200 * Math.sin( phi ) * Math.sin( theta );
-
-	// rotation
-
-	point.lookAt( mesh.position );
-
-	// scaling
-
-	point.scale.z = size;
-	point.updateMatrix();
-
-	// color
-
-	for ( var i = 0; i < point.geometry.faces.length; i ++ ) {
-
-		point.geometry.faces[ i ].color = color;
-
-	}
-
-	//console.log( point );
-
-	GeometryUtils.merge( pointsGeometry, point );
-
-}
-
-function onDocumentMouseDown( event ) {
-
-	event.preventDefault();
-
-	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-	document.addEventListener( 'mouseout', onDocumentMouseOut, false );
-
-	mouseOnDown.x = - event.clientX;
-	mouseOnDown.y = event.clientY;
-
-	targetOnDown.x = target.x;
-	targetOnDown.y = target.y;
-
-	container.style.cursor = 'move';
-
-}
-
-function onDocumentMouseMove( event ) {
-
-	mouse.x = - event.clientX;
-	mouse.y = event.clientY;
-
-	target.x = targetOnDown.x + ( mouse.x - mouseOnDown.x ) * 0.005;
-	target.y = targetOnDown.y + ( mouse.y - mouseOnDown.y ) * 0.005;
-
-	target.y = target.y > PI_HALF ? PI_HALF : target.y;
-	target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
-
-}
-
-function onDocumentMouseUp( event ) {
-
-	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-
-	container.style.cursor = 'auto';
-
-}
-
-function onDocumentMouseOut( event ) {
-
-	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-
-}
-
-function onDocumentMouseWheel( event ) {
-
-	distanceTarget -= event.wheelDeltaY * 0.3;
-
-	distanceTarget = distanceTarget > 1500 ? 1500 : distanceTarget;
-	distanceTarget = distanceTarget < 300 ? 300 : distanceTarget;
-
-
-}
-
-function onWindowResize( event ) {
-
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-
-	renderer.setSize( window.innerWidth, window.innerHeight );
-
-}
-
-function animate() {
-
-	requestAnimationFrame( animate );
-	render();
-
-}
-
-globeMesh.addEventListener('click', onGlobeClick);
-
-  function onGlobeClick(event) {
-    var map, material;
-
-    // Get pointc, convert to latitude/longitude
-    var latlng = getEventCenter.call(this, event);
-    console.log(latlng)
-    return
-    // Look for country at that latitude/longitude
-    var country = geo.search(latlng[0], latlng[1]);
-
-    if (currentPoint) {
-      wireFrame.remove(currentPoint);
-    }
-    currentPoint = new THREE.Mesh(pointGeometry, pointMaterial);
-    currentPoint.position.copy(getPoint.call(this, event));
-    wireFrame.add(currentPoint);
-
-    if (country !== null && country.code !== currentCountry) {
-
-      // Track the current country displayed
-      currentCountry = country.code;
-
-      // Update the html
-      d3.select("#msg").html(country.code);
-
-       // Overlay the selected country
-      map = textureCache(country.code, 'grey');
-
-      material = new THREE.MeshPhongMaterial({map: map, transparent: true});
-      if (!overlay) {
-        overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
-        overlay.rotation.y = Math.PI;
-        root.add(overlay);
-      } else {
-        overlay.material = material;
-      }
-    }
-  }
-
-function getPoint(event) {
-
-  // Get the vertices
-  let a = this.geometry.vertices[event.face.a];
-  let b = this.geometry.vertices[event.face.b];
-  let c = this.geometry.vertices[event.face.c];
-
-  // Averge them together
-  let point = {
-    x: (a.x + b.x + c.x) / 3,
-    y: (a.y + b.y + c.y) / 3,
-    z: (a.z + b.z + c.z) / 3
-  };
-
-  return point;
-}
-
-function getEventCenter(event, radius) {
-  radius = radius || 200;
-
-  var point = getPoint.call(this, event);
-
-  var latRads = Math.acos(point.y / radius);
-  var lngRads = Math.atan2(point.z, point.x);
-  var lat = (Math.PI / 2 - latRads) * (180 / Math.PI);
-  var lng = (Math.PI - lngRads) * (180 / Math.PI);
-
-  return [lat, lng - 180];
-}
-
-function render() {
-
-	rotation.x += ( target.x - rotation.x ) * 0.05;
-	rotation.y += ( target.y - rotation.y ) * 0.05;
-	distance += ( distanceTarget - distance ) * 0.05;
-
-	camera.position.x = distance * Math.sin( rotation.x ) * Math.cos( rotation.y );
-	camera.position.y = distance * Math.sin( rotation.y );
-	camera.position.z = distance * Math.cos( rotation.x ) * Math.cos( rotation.y );
-
+	//var material  = new THREE.MeshPhongMaterial({ color: 0x00ff00 } )
+	material = new THREE.MeshBasicMaterial( { color: 0x999999 } );
 	/*
-	// Do not render if camera hasn't moved.
+        uniforms['texture'].texture = new THREE.TextureLoader().load('world.jpg')
 
-	if ( vector.distanceTo( camera.position ) == 0 ) {
+        material = new THREE.RawShaderMaterial({
 
-		return;
+            uniforms: uniforms,
+            vertexShader: shader.vertexShader,
+            fragmentShader: shader.fragmentShader
 
-	}
-
-	vector.copy( camera.position );
+        });
 	*/
+	material.map    = new THREE.TextureLoader().load('world.jpg')
+	cube = new THREE.Mesh( geometry, material );
+	scene.add( cube );
+	var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+scene.add( light )
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
 
-	renderer.clear();
-	renderer.render( scene, camera );
-	renderer.render( sceneAtmosphere, camera );
-
+	camera.position.z = 650;
 }
+var animate = function () {
+	requestAnimationFrame( animate );
+
+	//cube.rotation.x += 0.1;
+	cube.rotation.y += 0.02;
+
+	renderer.render(scene, camera);
+};
+animate();
