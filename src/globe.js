@@ -81,7 +81,7 @@ var Shaders = {
 
 var container, stats;
 var camera, scene, sceneAtmosphere, renderer;
-var vector, mesh, atmosphere, point, points, pointsGeometry;
+var vector, mesh, globeMesh, atmosphere, point, points, pointsGeometry;
 
 var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
 var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
@@ -122,8 +122,8 @@ function init() {
 
 	} );
 
-	mesh = new THREE.Mesh( geometry, material );
-	scene.addObject( mesh );
+	globeMesh = new THREE.Mesh( geometry, material );
+	scene.addObject( globeMesh );
 
 	// atmosphere
 
@@ -226,7 +226,7 @@ function addPoint( lat, lng, size, color ) {
 
 	}
 
-	console.log( point );
+	//console.log( point );
 
 	GeometryUtils.merge( pointsGeometry, point );
 
@@ -305,6 +305,77 @@ function animate() {
 	requestAnimationFrame( animate );
 	render();
 
+}
+
+globeMesh.addEventListener('click', onGlobeClick);
+
+  function onGlobeClick(event) {
+    var map, material;
+
+    // Get pointc, convert to latitude/longitude
+    var latlng = getEventCenter.call(this, event);
+    console.log(latlng)
+    return
+    // Look for country at that latitude/longitude
+    var country = geo.search(latlng[0], latlng[1]);
+
+    if (currentPoint) {
+      wireFrame.remove(currentPoint);
+    }
+    currentPoint = new THREE.Mesh(pointGeometry, pointMaterial);
+    currentPoint.position.copy(getPoint.call(this, event));
+    wireFrame.add(currentPoint);
+
+    if (country !== null && country.code !== currentCountry) {
+
+      // Track the current country displayed
+      currentCountry = country.code;
+
+      // Update the html
+      d3.select("#msg").html(country.code);
+
+       // Overlay the selected country
+      map = textureCache(country.code, 'grey');
+
+      material = new THREE.MeshPhongMaterial({map: map, transparent: true});
+      if (!overlay) {
+        overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
+        overlay.rotation.y = Math.PI;
+        root.add(overlay);
+      } else {
+        overlay.material = material;
+      }
+    }
+  }
+
+function getPoint(event) {
+
+  // Get the vertices
+  let a = this.geometry.vertices[event.face.a];
+  let b = this.geometry.vertices[event.face.b];
+  let c = this.geometry.vertices[event.face.c];
+
+  // Averge them together
+  let point = {
+    x: (a.x + b.x + c.x) / 3,
+    y: (a.y + b.y + c.y) / 3,
+    z: (a.z + b.z + c.z) / 3
+  };
+
+  return point;
+}
+
+function getEventCenter(event, radius) {
+  radius = radius || 200;
+
+  var point = getPoint.call(this, event);
+
+  var latRads = Math.acos(point.y / radius);
+  var lngRads = Math.atan2(point.z, point.x);
+  var lat = (Math.PI / 2 - latRads) * (180 / Math.PI);
+  var lng = (Math.PI - lngRads) * (180 / Math.PI);
+
+  return [lat, lng - 180];
 }
 
 function render() {
