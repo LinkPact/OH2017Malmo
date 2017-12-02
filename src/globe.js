@@ -63,6 +63,8 @@ var PI_HALF = Math.PI / 2;
 var raycaster = new THREE.Raycaster();
 var mouseVector = new THREE.Vector2();
 
+let locationObjects = [];
+
 container = document.getElementById( 'container' );
 
 init();
@@ -151,7 +153,8 @@ function plotData() {
 		color = new THREE.Color();
 		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); // column color
 
-		addPoint(lat, lng, size * 100, color); // column size
+		let point = addPoint(lat, lng, size * 100, color); // column size
+		locationObjects.push(point);
 	}
 
     scene.add(points);
@@ -162,13 +165,14 @@ function addPoint(lat, lng, size, color) {
     var phi = (90 - lat) * Math.PI / 180;
     var theta = (180 - lng) * Math.PI / 180;
 
-    var radius = 1;
-    var height = 1;
+    var radius = 0.3;
+    var height = 0.5;
     var segments = 10;
 
-    // geometry = new THREE.CylinderGeometry(radius, radius, height, segments, segments);
-    // geometry.
-    geometry = new THREE.CubeGeometry(0.75, 0.75, 1);
+    // geometry = new THREE.CubeGeometry(0.75, 0.75, 1);
+	geometry = new THREE.CylinderGeometry(radius, radius, height, 20, 10, false);
+	geometry.rotateX(Math.PI / 2);
+
     for (var i = 0; i < geometry.vertices.length; i++) {
         var vertex = geometry.vertices[i];
         vertex.z += 0.5;
@@ -196,6 +200,8 @@ function addPoint(lat, lng, size, color) {
 	}
 
 	pointsGeometry.merge(point.geometry, point.matrix);
+
+	return(point);
 }
 
 function render() {
