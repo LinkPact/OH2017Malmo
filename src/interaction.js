@@ -49,6 +49,8 @@ function onDocumentMouseWheel( event ) {
 
 function onDocumentMouseDown( event ) {
 
+    console.log("onDocumentMouseDown");
+
     event.preventDefault();
 
     mouseVector.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
@@ -61,6 +63,7 @@ function onDocumentMouseDown( event ) {
     if (intersects.length > 0) {
 
         var latlng = getEventCenter.call(intersects[0], event);
+
         var locationData = data;
         var pressedObject = getPressedLocation(latlng, locationData);
         if (pressedObject != null) {
@@ -92,7 +95,7 @@ function getPressedLocation(pressLoc, locationData) {
     // }
     // addPoint(pressLoc[0], pressLoc[1], 100, color);
 
-    var pressRadius = 3;
+    var pressRadius = 5;
 
     for(var i = 0; i < locationData.length; i++) {
         var location = locationData[i];
