@@ -89,7 +89,8 @@ var vector, mesh, atmosphere, point, points, pointsGeometry;
 
 var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
 var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
-var distance = 1500, distanceTarget = 900;
+var distance = 1500;
+var distanceTarget = 900;
 
 var PI_HALF = Math.PI / 2;
 
@@ -125,7 +126,7 @@ function init() {
 	scene.add( cube );
 
 	//console.log(distance)
-	camera.position.z = distance;
+	camera.position.z = distanceTarget;
 
 	renderer = new THREE.WebGLRenderer( /* { antialias: false } */ );
 	//renderer.autoClear = false;
@@ -150,12 +151,16 @@ function animate() {
 function render() {
 
 	rotation.x += ( target.x - rotation.x ) * 0.05;
+
 	rotation.y += ( target.y - rotation.y ) * 0.05;
 	distance += ( distanceTarget - distance ) * 0.05;
+	distance = 900;
 
 	camera.position.x = distance * Math.sin( rotation.x ) * Math.cos( rotation.y );
 	camera.position.y = distance * Math.sin( rotation.y );
 	camera.position.z = distance * Math.cos( rotation.x ) * Math.cos( rotation.y );
+
+	camera.lookAt(0, 0, 0);
 
 	/*
 	// Do not render if camera hasn't moved.
