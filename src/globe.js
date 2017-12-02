@@ -80,14 +80,22 @@ function init() {
 
 	shader = Shaders['earth'];
     uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-
+    /*
 	var texture   = new THREE.TextureLoader().load('night.jpg')
 	material = new THREE.ShaderMaterial({  
 	  uniforms: {"texture": { type: "t", value: texture }},
 	  vertexShader: shader.vertexShader,
       fragmentShader: shader.fragmentShader
-	});
-	earth = new THREE.Mesh( geometry, material );
+	});*/
+
+	var ballMat = new THREE.MeshStandardMaterial( {
+					color: 0xffffff,
+					roughness: 0.8,
+					metalness: 0.05
+				});
+	ballMat.map = new THREE.TextureLoader().load( "night.jpg");
+	ballMat.needsUpdate = true;
+	earth = new THREE.Mesh( geometry, ballMat );
 	scene.add( earth );
 
 	shader = Shaders['atmosphere'];
@@ -103,9 +111,12 @@ function init() {
 
 	});
 
-	 mesh = new THREE.Mesh(geometry, material);
-	 mesh.scale.set( 1.1, 1.1, 1.1 );
-	 scene.add(mesh);
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.scale.set( 1.1, 1.1, 1.1 );
+	scene.add(mesh);
+
+	var light = new THREE.AmbientLight( 0x909090 ); // soft white light
+	scene.add( light );
 
 	pointsGeometry = new THREE.Geometry();
 
@@ -183,6 +194,11 @@ function addPoint(lat, lng, size, color) {
 	point.position.y = 200 * Math.cos(phi);
 	point.position.z = 200 * Math.sin(phi) * Math.sin(theta);
 
+	var light = new THREE.PointLight( 0xffffff, 13, 155 );
+	light.position.set( 205 * Math.sin(phi) * Math.cos(theta),
+	 205 * Math.cos(phi), 205 * Math.sin(phi) * Math.sin(theta));
+	scene.add( light );
+
 	// rotation
 	point.lookAt(earth.position);
 
@@ -197,7 +213,7 @@ function addPoint(lat, lng, size, color) {
 		point.geometry.faces[i].color = color;
 	}
 
-	pointsGeometry.merge(point.geometry, point.matrix);
+	//pointsGeometry.merge(point.geometry, point.matrix);
 
 	return(point);
 }
