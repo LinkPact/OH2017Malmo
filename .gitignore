@@ -2,3 +2,4 @@ node_modules/
 dist/
 .idea/
 *.log
+src/jakob_experiment/three.js-master
