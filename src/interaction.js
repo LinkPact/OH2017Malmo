@@ -58,7 +58,7 @@ function onDocumentMouseDown( event ) {
 
     raycaster.setFromCamera(mouseVector, camera);
 
-    var intersects = raycaster.intersectObjects(scene.children);
+    var intersects = raycaster.intersectObjects([earth]);
 
     if (intersects.length > 0) {
 

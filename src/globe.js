@@ -88,7 +88,6 @@ function init() {
       fragmentShader: shader.fragmentShader
 	});
 	earth = new THREE.Mesh( geometry, material );
-	earth.rotation.y = Math.PI;
 	scene.add( earth );
 
 	shader = Shaders['atmosphere'];
@@ -163,7 +162,7 @@ function plotData() {
 function addPoint(lat, lng, size, color) {
 
     var phi = (90 - lat) * Math.PI / 180;
-    var theta = (180 - lng) * Math.PI / 180;
+    var theta = (0 - lng) * Math.PI / 180;
 
     var radius = 0.3;
     var height = 0.5;
