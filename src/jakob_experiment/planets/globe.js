@@ -184,9 +184,10 @@ DAT.Globe = function(container, colorFn) {
     }
 
     addData = function(data, opts) {
-        var lat, lng, size, color, i;
 
-        var subgeo = new THREE.Geometry();
+        let lat, lng, size, color, i;
+
+        let subgeo = new THREE.Geometry();
         for (i = 0; i < data.length; i += 3) {
             lat = data[i];
             lng = data[i + 1];

@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 
 <!--<script src="../three.js-master/build/three.min.js"></script>-->
-<script src="../three.min.js"></script>
 <script src="utils.js"></script>
+
+<!--<script src="../three_src/ThreeWebGL.js"></script>-->
+<script src="../three.min.js"></script>
+<script src="../three_src/GeometryUtils.js"></script>
+
+<!--<script src="../three_src/ThreeExtras.js"></script>-->
+<!--<script src="../three_src/RequestAnimationFrame.js"></script>-->
+<!--<script src="../three_src/Detector.js"></script>-->
+
 
 <!--<script src='vendor/three.js/build/three.min.js'></script>-->
 <!--<script src='../threex.planets.js'></script>-->
@@ -15,6 +23,10 @@
 
 <script>
 
+    let point;
+    let mesh;
+    
+
     // Setup
     let scene	= new THREE.Scene();
     let geometry   = new THREE.SphereGeometry(0.5, 100, 100);
@@ -22,7 +34,7 @@
     let earthMesh = new THREE.Mesh(geometry, material);
     scene.add(earthMesh);
 
-    material.map    = THREE.ImageUtils.loadTexture('../../images/earthmap1k.jpg');
+    material.map    = THREE.ImageUtils.loadTexture('../../images/earthmap_dark.png');
 
     let renderer	= new THREE.WebGLRenderer({
         antialias	: true
@@ -64,7 +76,22 @@
 //    let dot = new THREE.Points( dotGeometry, dotMaterial );
 //    scene.add( dot );
 
-    addData();
+//    parse_data()
+
+//    point = new THREE.Mesh(geometry);
+    mesh = new THREE.Mesh(geometry, material);
+    mesh.matrixAutoUpdate = false;
+    scene.add(mesh);
+
+
+
+    let data = [35,33,0.99,
+        35,136,0.27,
+        35,25,1,
+        35,34,0.86]
+
+
+    addData(data);
 
 
 

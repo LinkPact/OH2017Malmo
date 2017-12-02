@@ -48,14 +48,43 @@ function latLongToVector3(lat, lon, radius, heigth) {
 // }
 
 
+// xhr.onreadystatechange = function(e) {
+//     if (xhr.readyState === 4) {
+//         if (xhr.status === 200) {
+//             var data = [];
+//             data = JSON.parse(xhr.responseText);
+//             window.data = data;
+//             globe.clearData();
+//             globe.addData(data);
+//             globe.createPoints();
+//             globe.animate();
+//             document.getElementById('load').innerHTML = ' ';
+//         }
+//     }
+// };
+
+// colorFn = function(x) {
+//         var c = new THREE.Color();
+//         if (x==0.0) {
+//             c.setHSV( ( 0.6 - ( x * 0.5 ) ), 0, 0 );
+//         } else {
+//             c.setHSV( ( 0.6 - ( x * 0.5 ) ), 1.0, 1.0 );
+//         }
+//         return c;
+//     };
+
+
 addData = function(data, opts) {
+
     var lat, lng, size, color, i;
 
     var subgeo = new THREE.Geometry();
     for (i = 0; i < data.length; i += 3) {
         lat = data[i];
         lng = data[i + 1];
-        color = colorFn(data[i+2]);
+        color = new THREE.Color();
+        color.setRGB(1, 0, 0);
+        // color = colorFn(data[i+2]);
         size = 0; // data[i + 2]; // CHANGED
         addPoint(lat, lng, size, color, subgeo);
     }
@@ -77,6 +106,9 @@ function createPoints() {
 
 function addPoint(lat, lng, size, color, subgeo) {
 
+    let point = new THREE.Mesh(geometry);
+
+
     let phi = (90 - lat) * Math.PI / 180;
     let theta = (180 - lng) * Math.PI / 180;
 
@@ -96,5 +128,5 @@ function addPoint(lat, lng, size, color, subgeo) {
 
     }
 
-    GeometryUtils.merge(subgeo, point);
+    THREE.GeometryUtils.merge(subgeo, point);
 }
