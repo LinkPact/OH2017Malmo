@@ -96,7 +96,7 @@ addData = function(data, opts) {
 function createPoints() {
     if (this._baseGeometry !== undefined) {
         let points = new THREE.Mesh(this._baseGeometry, new THREE.MeshBasicMaterial({
-            color: 0xffffff,
+            color: 0xff0000,
             vertexColors: THREE.FaceColors,
             morphTargets: false
         }));
@@ -106,15 +106,16 @@ function createPoints() {
 
 function addPoint(lat, lng, size, color, subgeo) {
 
-    let point = new THREE.Mesh(geometry);
+    console.log(lat, lng, size, color, subgeo);
 
+    let point = new THREE.Mesh(geometry);
 
     let phi = (90 - lat) * Math.PI / 180;
     let theta = (180 - lng) * Math.PI / 180;
 
-    point.position.x = 200 * Math.sin(phi) * Math.cos(theta);
-    point.position.y = 200 * Math.cos(phi);
-    point.position.z = 200 * Math.sin(phi) * Math.sin(theta);
+    point.position.x = 1 * Math.sin(phi) * Math.cos(theta);
+    point.position.y = 1 * Math.cos(phi);
+    point.position.z = 1 * Math.sin(phi) * Math.sin(theta);
 
     point.lookAt(mesh.position);
 
@@ -129,4 +130,5 @@ function addPoint(lat, lng, size, color, subgeo) {
     }
 
     THREE.GeometryUtils.merge(subgeo, point);
+    // geometry.merge( geometry2, matrix, materialIndexOffset )
 }

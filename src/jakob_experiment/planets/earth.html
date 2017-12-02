@@ -29,12 +29,12 @@
 
     // Setup
     let scene	= new THREE.Scene();
-    let geometry   = new THREE.SphereGeometry(0.5, 100, 100);
+    let geometry   = new THREE.SphereGeometry(0.5, 10, 10);
     let material  = new THREE.MeshPhongMaterial();
     let earthMesh = new THREE.Mesh(geometry, material);
     scene.add(earthMesh);
 
-    material.map    = THREE.ImageUtils.loadTexture('../../images/earthmap_dark.png');
+//    material.map    = THREE.ImageUtils.loadTexture('../../images/earthmap_dark.png');
 
     let renderer	= new THREE.WebGLRenderer({
         antialias	: true
@@ -88,10 +88,18 @@
     let data = [35,33,0.99,
         35,136,0.27,
         35,25,1,
-        35,34,0.86]
+        35,34,0.86,
+        -7, -52, 1];
 
 
-    addData(data);
+    let three_color = new THREE.Color();
+    three_color.setRGB(1, 0, 0);
+    let subgeo = new THREE.Geometry();
+//    addData(data);
+    addPoint(-7, -52, 0, three_color, subgeo);
+    addPoint(-7, -7, 0, three_color, new THREE.Geometry());
+    addPoint(7, 7, 0, three_color, new THREE.Geometry());
+    addPoint(7, 52, 0, three_color, new THREE.Geometry());
 
 
 
