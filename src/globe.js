@@ -1,4 +1,47 @@
-
+  var Shaders = {
+    'earth' : {
+      uniforms: {
+        'texture': { type: 't', value: null }
+      },
+      vertexShader: [
+        'varying vec3 vNormal;',
+        'varying vec2 vUv;',
+        'void main() {',
+          'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+          'vNormal = normalize( normalMatrix * normal );',
+          'vUv = uv;',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'uniform sampler2D texture;',
+        'varying vec3 vNormal;',
+        'varying vec2 vUv;',
+        'void main() {',
+          'vec3 diffuse = texture2D( texture, vUv ).xyz;',
+          'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+          'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );',
+          'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );',
+        '}'
+      ].join('\n')
+    },
+    'atmosphere' : {
+      uniforms: {},
+      vertexShader: [
+        'varying vec3 vNormal;',
+        'void main() {',
+          'vNormal = normalize( normalMatrix * normal );',
+          'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'varying vec3 vNormal;',
+        'void main() {',
+          'float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );',
+          'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;',
+        '}'
+      ].join('\n')
+    }
+  };
 
 
 //plotData();
@@ -8,7 +51,8 @@ var camera, scene, sceneAtmosphere, renderer;
 var vector, mesh, atmosphere, point, points, pointsGeometry, earth;
 
 var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
-var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
+var rotation = { x: 0, y: 0 }, incr_rotation = { x: -0.001, y: 0 };
+var target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
 var distance = 1500;
 var distanceTarget = 900;
 
@@ -32,16 +76,35 @@ function init() {
 
 	var geometry = new THREE.SphereGeometry(200, 40, 30);
 
-	//material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+	shader = Shaders['earth'];
+    uniforms = THREE.UniformsUtils.clone(shader.uniforms);
 
 	var texture   = new THREE.TextureLoader().load('night.jpg')
 	material = new THREE.ShaderMaterial({  
 	  uniforms: {"texture": { type: "t", value: texture }},
-	  vertexShader: document.getElementById('vertexShader').textContent,
-	  fragmentShader: document.getElementById('fragmentShader').textContent
+	  vertexShader: shader.vertexShader,
+      fragmentShader: shader.fragmentShader
 	});
 	earth = new THREE.Mesh( geometry, material );
+	earth.rotation.y = Math.PI;
 	scene.add( earth );
+
+	shader = Shaders['atmosphere'];
+	uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+
+	material = new THREE.ShaderMaterial({
+	    uniforms: uniforms,
+	    vertexShader: shader.vertexShader,
+	    fragmentShader: shader.fragmentShader,
+	    side: THREE.BackSide,
+	    blending: THREE.AdditiveBlending,
+	    transparent: true
+
+	});
+
+	 mesh = new THREE.Mesh(geometry, material);
+	 mesh.scale.set( 1.1, 1.1, 1.1 );
+	 scene.add(mesh);
 
 	pointsGeometry = new THREE.Geometry();
 
@@ -97,7 +160,7 @@ function plotData() {
 function addPoint(lat, lng, size, color) {
 
     var phi = (90 - lat) * Math.PI / 180;
-    var theta = (0 - lng) * Math.PI / 180;
+    var theta = (180 - lng) * Math.PI / 180;
 
     var radius = 1;
     var height = 1;
@@ -136,6 +199,9 @@ function addPoint(lat, lng, size, color) {
 }
 
 function render() {
+
+	target.x += incr_rotation.x;
+    target.y += incr_rotation.y;
 
 	rotation.x += ( target.x - rotation.x ) * 0.05;
 
