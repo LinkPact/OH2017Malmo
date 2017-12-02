@@ -156,7 +156,7 @@ function plotData() {
 
 	var lat, lng, size, color;
 
-	var color = random_rgba();
+	var color = 0xffff90;
     // points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
 
     points = new THREE.Mesh(pointsGeometry, new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } ));
@@ -180,6 +180,12 @@ function addPoint(lat, lng, size, color) {
     var phi = (90 - lat) * Math.PI / 180;
     var theta = (0 - lng) * Math.PI / 180;
 
+    var radius = 1;
+    var height = 1;
+    var segments = 10;
+
+    // geometry = new THREE.CylinderGeometry(radius, radius, height, segments, segments);
+    // geometry.
     geometry = new THREE.CubeGeometry(0.75, 0.75, 1);
     for (var i = 0; i < geometry.vertices.length; i++) {
         var vertex = geometry.vertices[i];
