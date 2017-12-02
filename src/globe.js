@@ -34,7 +34,7 @@ function init() {
 
 	//material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
-	var texture   = new THREE.TextureLoader().load('world.jpg')
+	var texture   = new THREE.TextureLoader().load('night.jpg')
 	material = new THREE.ShaderMaterial({  
 	  uniforms: {"texture": { type: "t", value: texture }},
 	  vertexShader: document.getElementById('vertexShader').textContent,
@@ -53,7 +53,7 @@ function init() {
 	container.appendChild( renderer.domElement );
 
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	//document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+	document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
