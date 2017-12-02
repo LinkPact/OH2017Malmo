@@ -159,18 +159,18 @@ function plotData() {
 	var color = random_rgba();
     // points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
 
-	for (var i = 0, l = data.length; i < l; i++) {
+    points = new THREE.Mesh(pointsGeometry, new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } ));
+
+    for (var i = 0, l = data.length; i < l; i++) {
 
 		lat = data[i][1];
 		lng = data[i][2];
 		size = data[i][0];
 		color = new THREE.Color();
-		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); //column color
+		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); // column color
 
-		addPoint(lat, lng, size * 200, color); //column size
+		addPoint(lat, lng, size * 100, color); // column size
 	}
-
-    points = new THREE.Mesh(pointsGeometry, new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } ));
 
     scene.add(points);
 }
@@ -199,7 +199,7 @@ function addPoint(lat, lng, size, color) {
 	// scaling
 	point.scale.x = size;
     point.scale.y = size;
-    point.scale.z = size;
+    point.scale.z = -size * 0.2;
 	point.updateMatrix();
 
 	// color
