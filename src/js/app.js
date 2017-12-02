@@ -8,6 +8,8 @@ import * as THREE from 'three';
     let earthMesh = new THREE.Mesh(geometry, material);
     scene.add(earthMesh);
 
+    material.map    = THREE.ImageUtils.loadTexture('/images/earthmap1k.jpg')
+
     var renderer	= new THREE.WebGLRenderer({
         antialias	: true
     });
