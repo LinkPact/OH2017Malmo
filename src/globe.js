@@ -85,7 +85,7 @@ var Shaders = {
 
 var container, stats;
 var camera, scene, sceneAtmosphere, renderer;
-var vector, mesh, atmosphere, point, points, pointsGeometry;
+var vector, mesh, atmosphere, point, points, pointsGeometry, earth;
 
 var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
 var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
@@ -97,7 +97,8 @@ var PI_HALF = Math.PI / 2;
 container = document.getElementById( 'container' );
 
 init();
-
+plotData();
+animate();
 function init() {
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 1, 10000 );
@@ -124,8 +125,25 @@ function init() {
         });
 	*/
 	material.map    = new THREE.TextureLoader().load('world.jpg')
-	cube = new THREE.Mesh( geometry, material );
-	scene.add( cube );
+	earth = new THREE.Mesh( geometry, material );
+	scene.add( earth );
+
+
+	// point
+
+	geometry = new THREE.CubeGeometry( 0.75, 0.75, 1 );
+	for ( var i = 0; i < geometry.vertices.length; i ++ ) {
+		var vertex = geometry.vertices[ i ];
+		vertex.z += 0.5;
+
+	}
+
+	point = new THREE.Mesh( geometry );
+
+	pointsGeometry = new THREE.Geometry();
+
+	//
+
 
 	//console.log(distance)
 	camera.position.z = distanceTarget;
@@ -147,6 +165,66 @@ function animate() {
 
 	requestAnimationFrame( animate );
 	render();
+
+}
+
+
+function plotData() {
+
+	var lat, lng, size, color;
+
+	points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
+
+	for ( var i = 0, l = data.length; i < l; i ++ ) {
+
+		lat = data[ i ][ 1 ];
+		lng = data[ i ][ 2 ];
+		size = data[ i ][ 0 ];
+		color = new THREE.Color();
+		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 );//column color
+
+		addPoint( lat, lng, size * 150, color  );//column size
+
+	}
+
+	scene.add( points );
+
+}
+
+function addPoint( lat, lng, size, color ) {
+
+	// if ( lat == 0 && lng == 0 ) return;
+
+	var phi = ( 90 - lat ) * Math.PI / 180;
+	var theta = ( 180 - lng ) * Math.PI / 180;
+
+	// position
+
+	point.x = 200 * Math.sin( phi ) * Math.cos( theta );
+	point.y = 200 * Math.cos( phi );
+	point.z = 200 * Math.sin( phi ) * Math.sin( theta );
+
+	// rotation
+	point.lookAt( earth.position );
+
+	// scaling
+
+	point.scale.z = size;
+	point.updateMatrix();
+
+	// color
+
+	for ( var i = 0; i < point.geometry.faces.length; i ++ ) {
+
+		point.geometry.faces[ i ].color = color;
+
+	}
+
+
+	pointsGeometry.merge(point.geometry, point.matrix);
+
+
+
 
 }
 
@@ -237,5 +315,3 @@ function onDocumentMouseDown( event ) {
 	container.style.cursor = 'move';
 
 }
-
-animate();
