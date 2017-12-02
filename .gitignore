@@ -3,4 +3,4 @@ wikiglobe/
 *.log
 src/jakob_experiment/three.js-master/
 node_modules/
-webglobe_trim/
+wikiglobe_trim/
