@@ -167,7 +167,7 @@ function plotData() {
 		color = new THREE.Color();
 		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); //column color
 
-		addPoint(lat, lng, size * 100, color); //column size
+		addPoint(lat, lng, size * 200, color); //column size
 	}
 
     points = new THREE.Mesh(pointsGeometry, new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } ));
@@ -197,7 +197,9 @@ function addPoint(lat, lng, size, color) {
 	point.lookAt(earth.position);
 
 	// scaling
-	point.scale.z = size;
+	point.scale.x = size;
+    point.scale.y = size;
+    point.scale.z = size;
 	point.updateMatrix();
 
 	// color
