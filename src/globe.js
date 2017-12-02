@@ -234,3 +234,10 @@ function render() {
 	//renderer.render( sceneAtmosphere, camera );
 }
 
+function updateProjectInfo(title, tags, location_name, startTime, endTime, page_url) {
+    $("#project-title").text(title);
+    $("#project-tags").text(tags);
+    $("#project-location").text(location_name);
+    $("#project-time").text(startTime + " " + endTime);
+    $("#project-page").html("<a href=\"" + page_url + "\">Project Page</a>");
+}
