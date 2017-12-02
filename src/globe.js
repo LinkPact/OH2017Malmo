@@ -1,83 +1,3 @@
-var Shaders = {
-
-	'earth' : {
-
-		uniforms: {
-
-			"texture": { type: "t", value: 0, texture: null }
-
-		},
-
-		vertexShader: [
-
-			"varying vec3 vNormal;",
-			"varying vec2 vUv;",
-
-			"void main() {",
-
-				"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-
-				"vNormal = normalize( normalMatrix * normal );",
-				"vUv = uv;",
-
-			"}"
-
-		].join("\n"),
-
-		fragmentShader: [
-
-			"uniform sampler2D texture;",
-
-			"varying vec3 vNormal;",
-			"varying vec2 vUv;",
-
-			"void main() {",
-
-				"vec3 diffuse = texture2D( texture, vUv ).xyz;",
-				"float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );",
-				"vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );",
-
-				"gl_FragColor = vec4( diffuse + atmosphere, 1.0 );",
-
-			"}"
-
-		].join("\n")
-
-	},
-
-	'atmosphere' : {
-
-		uniforms: {},
-
-		vertexShader: [
-
-			"varying vec3 vNormal;",
-
-			"void main() {",
-
-				"vNormal = normalize( normalMatrix * normal );",
-				"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-
-			"}"
-
-		].join("\n"),
-
-		fragmentShader: [
-
-			"varying vec3 vNormal;",
-
-			"void main() {",
-
-				"float intensity = pow( 0.8 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 12.0 );",
-				"gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;",
-
-			"}"
-
-		].join("\n")
-
-	}
-
-};
 
 
 
@@ -92,7 +12,12 @@ var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y
 var distance = 1500;
 var distanceTarget = 900;
 
+var segments = 155; // number of vertices. Higher = better mouse accuracy
+
 var PI_HALF = Math.PI / 2;
+
+var raycaster = new THREE.Raycaster();
+var mouseVector = new THREE.Vector2();
 
 container = document.getElementById( 'container' );
 
@@ -106,8 +31,6 @@ function init() {
 	camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 1, 10000 );
 
 	var geometry = new THREE.SphereGeometry(200, 40, 30);
-	var shader = Shaders[ 'earth' ];
-	var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
 	material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
@@ -115,14 +38,10 @@ function init() {
 	earth = new THREE.Mesh( geometry, material );
 	scene.add( earth );
 
-	// geometry = new THREE.CubeGeometry( 0.75, 0.75, 1 );
-	// for ( var i = 0; i < geometry.vertices.length; i ++ ) {
-	// 	var vertex = geometry.vertices[ i ];
-	// 	vertex.z += 0.5;
-    //
-	// }
-
-	// point = new THREE.Mesh( geometry );
+	var wireMaterial  = new THREE.MeshPhongMaterial({wireframe: true, transparent: true});
+	var wireFrame = new THREE.Mesh(new THREE.SphereGeometry(201, segments, segments), wireMaterial);
+	wireFrame.rotation.y = Math.PI;
+	scene.add(wireFrame)
 
 	pointsGeometry = new THREE.Geometry();
 
@@ -197,9 +116,7 @@ function addPoint(lat, lng, size, color) {
 	point.lookAt(earth.position);
 
 	// scaling
-	point.scale.x = size;
-    point.scale.y = size;
-    point.scale.z = size;
+    point.scale.z = -size;
 	point.updateMatrix();
 
 	// color
@@ -282,6 +199,21 @@ function onDocumentMouseDown( event ) {
 
 	event.preventDefault();
 
+	mouseVector.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+    mouseVector.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+
+    raycaster.setFromCamera( mouseVector, camera );
+
+    var intersects = raycaster.intersectObjects( scene.children ); 
+
+    if ( intersects.length > 0 ) {
+
+        
+		var latlng = getEventCenter.call(intersects[0], event);
+		console.log(latlng)
+    }
+
+	
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
 	document.addEventListener( 'mouseout', onDocumentMouseOut, false );
@@ -294,4 +226,35 @@ function onDocumentMouseDown( event ) {
 
 	container.style.cursor = 'move';
 
+}
+
+function getPoint(event) {
+
+  // Get the vertices
+  console.log(this)
+  let a = this.geometry.vertices[event.face.a];
+  let b = this.geometry.vertices[event.face.b];
+  let c = this.geometry.vertices[event.face.c];
+
+  // Averge them together
+  let point = {
+    x: (a.x + b.x + c.x) / 3,
+    y: (a.y + b.y + c.y) / 3,
+    z: (a.z + b.z + c.z) / 3
+  };
+
+  return point;
+}
+
+function getEventCenter(event, radius) {
+  radius = radius || 200;
+
+  var point = this.point;
+
+  var latRads = Math.acos(point.y / radius);
+  var lngRads = Math.atan2(point.z, point.x);
+  var lat = (Math.PI / 2 - latRads) * (180 / Math.PI);
+  var lng = (Math.PI - lngRads) * (180 / Math.PI);
+
+  return [lat, lng - 180];
 }
