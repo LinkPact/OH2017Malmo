@@ -111,7 +111,7 @@ function init() {
 
 	camera.position.z = distanceTarget;
 
-	renderer = new THREE.WebGLRenderer( /* { antialias: false } */ );
+	renderer = new THREE.WebGLRenderer(  { alpha: true }  );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	container.appendChild( renderer.domElement );
