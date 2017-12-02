@@ -19,6 +19,8 @@ var PI_HALF = Math.PI / 2;
 var raycaster = new THREE.Raycaster();
 var mouseVector = new THREE.Vector2();
 
+let locationObjects = [];
+
 container = document.getElementById( 'container' );
 
 init();
@@ -83,7 +85,8 @@ function plotData() {
 		color = new THREE.Color();
 		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); // column color
 
-		addPoint(lat, lng, size * 100, color); // column size
+		let point = addPoint(lat, lng, size * 100, color); // column size
+		locationObjects.push(point);
 	}
 
     scene.add(points);
@@ -128,6 +131,8 @@ function addPoint(lat, lng, size, color) {
 	}
 
 	pointsGeometry.merge(point.geometry, point.matrix);
+
+	return(point);
 }
 
 function render() {
