@@ -156,7 +156,6 @@ function render() {
 
 	rotation.y += ( target.y - rotation.y ) * 0.05;
 	distance += ( distanceTarget - distance ) * 0.05;
-	distance = 900;
 
 	camera.position.x = distance * Math.sin( rotation.x ) * Math.cos( rotation.y );
 	camera.position.y = distance * Math.sin( rotation.y );
