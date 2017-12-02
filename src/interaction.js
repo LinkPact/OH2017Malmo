@@ -39,6 +39,13 @@ function onDocumentMouseOut( event ) {
     document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
 
 }
+function onDocumentMouseWheel( event ) {
+
+    distanceTarget -= event.wheelDeltaY * 0.3;
+
+    distanceTarget = distanceTarget > 1500 ? 1500 : distanceTarget;
+    distanceTarget = distanceTarget < 300 ? 300 : distanceTarget;
+}
 
 function onDocumentMouseDown( event ) {
 

@@ -34,9 +34,14 @@ function init() {
 
 	var geometry = new THREE.SphereGeometry(200, 40, 30);
 
-	material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+	//material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
-	material.map    = new THREE.TextureLoader().load('world.jpg')
+	var texture   = new THREE.TextureLoader().load('night.jpg')
+	material = new THREE.ShaderMaterial({  
+	  uniforms: {"texture": { type: "t", value: texture }},
+	  vertexShader: document.getElementById('vertexShader').textContent,
+	  fragmentShader: document.getElementById('fragmentShader').textContent
+	});
 	earth = new THREE.Mesh( geometry, material );
 	scene.add( earth );
 
@@ -50,7 +55,7 @@ function init() {
 	container.appendChild( renderer.domElement );
 
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	//document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+	document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
