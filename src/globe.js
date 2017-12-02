@@ -94,6 +94,8 @@ var distanceTarget = 900;
 
 var PI_HALF = Math.PI / 2;
 
+container = document.getElementById( 'container' );
+
 init();
 
 function init() {
@@ -133,7 +135,7 @@ function init() {
 	//renderer.setClearColor( 0x101010, 1.0 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
-	document.body.appendChild( renderer.domElement );
+	container.appendChild( renderer.domElement );
 
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	//document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
