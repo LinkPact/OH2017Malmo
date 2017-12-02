@@ -108,7 +108,7 @@ function init() {
 	var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
 	//var material  = new THREE.MeshPhongMaterial({ color: 0x00ff00 } )
-	material = new THREE.MeshBasicMaterial( { color: 0x999999 } );
+	material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 	/*
         uniforms['texture'].texture = new THREE.TextureLoader().load('world.jpg')
 
@@ -123,10 +123,6 @@ function init() {
 	material.map    = new THREE.TextureLoader().load('world.jpg')
 	cube = new THREE.Mesh( geometry, material );
 	scene.add( cube );
-	var light = new THREE.AmbientLight( 0x404040 ); // soft white light
-scene.add( light )
-var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-scene.add( directionalLight );
 
 	//console.log(distance)
 	camera.position.z = distance;
