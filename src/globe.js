@@ -146,13 +146,12 @@ function plotData() {
 
     for (var i = 0, l = data.length; i < l; i++) {
 
-		lat = data[i][1];
-		lng = data[i][2];
-		size = data[i][0];
+		lat = data[i]["latLong"]["lat"];
+		lng = data[i]["latLong"]["long"];
 		color = new THREE.Color();
 		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); // column color
 
-		let point = addPoint(lat, lng, size * 100, color); // column size
+		let point = addPoint(lat, lng, 20, color); // column size
 		locationObjects.push(point);
 	}
 
@@ -234,10 +233,19 @@ function render() {
 	//renderer.render( sceneAtmosphere, camera );
 }
 
-function updateProjectInfo(title, tags, location_name, startTime, endTime, page_url) {
+function updateProjectInfo(locationEntry) {
+
+	var title = locationEntry["title"];
+	var tags = locationEntry["focus"];
+	var location_name = locationEntry["country"];
+	var startTime = locationEntry["startDate"];
+	var endTime = locationEntry["endDate"];
+	var pageURL = locationEntry["url"];
+    // title, tags, location_name, startTime, endTime, page_url
+
     $("#project-title").text(title);
     $("#project-tags").text(tags);
     $("#project-location").text(location_name);
     $("#project-time").text(startTime + " " + endTime);
-    $("#project-page").html("<a href=\"" + page_url + "\">Project Page</a>");
+    $("#project-page").html("<a href=\"" + pageURL + "\">Project Page</a>");
 }

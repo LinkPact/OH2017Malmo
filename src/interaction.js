@@ -49,8 +49,6 @@ function onDocumentMouseWheel( event ) {
 
 function onDocumentMouseDown( event ) {
 
-    console.log("onDocumentMouseDown");
-
     event.preventDefault();
 
     mouseVector.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
@@ -68,6 +66,9 @@ function onDocumentMouseDown( event ) {
         var pressedObject = getPressedLocation(latlng, locationData);
         if (pressedObject != null) {
             performLocationPress(pressedObject);
+            // panToLocation(latlng);
+
+            updateProjectInfo(pressedObject);
         }
     }
 
@@ -84,22 +85,14 @@ function onDocumentMouseDown( event ) {
     container.style.cursor = 'move';
 }
 
-function getPressedLocation(pressLoc, locationData) {
 
-    // var point = locationObjects[0];
-    // var color = new THREE.Color();
-    // color.setRGB(0.2, 0.5, 0.2);
-    // console.log(point);
-    // for (var i = 0; i < point.geometry.faces.length; i++) {
-    //     point.geometry.faces[i].color = color;
-    // }
-    // addPoint(pressLoc[0], pressLoc[1], 100, color);
+function getPressedLocation(pressLoc, locationData) {
 
     var pressRadius = 5;
 
     for(var i = 0; i < locationData.length; i++) {
         var location = locationData[i];
-        var locPos = [location[1], location[2]];
+        var locPos = [location["latLong"]["lat"], location["latLong"]["long"]];
 
         if (isPointInRange(pressLoc, locPos, pressRadius)) {
             return(location);
@@ -107,6 +100,7 @@ function getPressedLocation(pressLoc, locationData) {
     }
     return(null);
 }
+
 
 function isPointInRange(clickPos, locationPos, radius) {
 
@@ -118,8 +112,34 @@ function isPointInRange(clickPos, locationPos, radius) {
 }
 
 function performLocationPress(pressedObject) {
-    console.log("Pressed location:", pressedObject)
+    console.log("Pressed location:", pressedObject);
 }
+
+// function panToLocation(latlng) {
+//
+//     // Get pointc, convert to latitude/longitude
+//     // var latlng = getEventCenter.call(this, event);
+//
+//     // Get new camera position
+//     var temp = new THREE.Mesh();
+//     temp.position.copy(convertToXYZ(latlng, 900));
+//     temp.lookAt(root.position);
+//     temp.rotateY(Math.PI);
+//
+//     for (let key in temp.rotation) {
+//         if (temp.rotation[key] - camera.rotation[key] > Math.PI) {
+//             temp.rotation[key] -= Math.PI * 2;
+//         } else if (camera.rotation[key] - temp.rotation[key] > Math.PI) {
+//             temp.rotation[key] += Math.PI * 2;
+//         }
+//     }
+//
+//     var tweenPos = getTween.call(camera, 'position', temp.position);
+//     d3.timer(tweenPos);
+//
+//     var tweenRot = getTween.call(camera, 'rotation', temp.rotation);
+//     d3.timer(tweenRot);
+// }
 
 function getPoint(event) {
 
