@@ -80,21 +80,28 @@ var Shaders = {
 };
 
 
-init();
+
 //plotData();
 
-var cube, renderer, scene, camera;
+var container, stats;
+var camera, scene, sceneAtmosphere, renderer;
+var vector, mesh, atmosphere, point, points, pointsGeometry;
 
-//var distance = 1500, distanceTarget = 900;
+var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
+var rotation = { x: 0, y: 0 }, target = { x: 0, y: 0 }, targetOnDown = { x: 0, y: 0 };
+var distance = 1500, distanceTarget = 900;
 
+var PI_HALF = Math.PI / 2;
+
+init();
 
 function init() {
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+	camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 1, 10000 );
 
-	renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	//renderer = new THREE.WebGLRenderer();
+	//renderer.setSize( window.innerWidth, window.innerHeight );
+
 
 	var geometry = new THREE.SphereGeometry( 200, 40, 30 );
 	var shader = Shaders[ 'earth' ];
@@ -121,14 +128,112 @@ scene.add( light )
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
 scene.add( directionalLight );
 
-	camera.position.z = 650;
+	//console.log(distance)
+	camera.position.z = distance;
+
+	renderer = new THREE.WebGLRenderer( /* { antialias: false } */ );
+	//renderer.autoClear = false;
+	//renderer.setClearColor( 0x101010, 1.0 );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+	document.body.appendChild( renderer.domElement );
+
+	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	//document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+
+	window.addEventListener( 'resize', onWindowResize, false );
+
 }
-var animate = function () {
+function animate() {
+
 	requestAnimationFrame( animate );
+	render();
 
-	//cube.rotation.x += 0.1;
-	cube.rotation.y += 0.02;
+}
 
-	renderer.render(scene, camera);
-};
+function render() {
+
+	rotation.x += ( target.x - rotation.x ) * 0.05;
+	rotation.y += ( target.y - rotation.y ) * 0.05;
+	distance += ( distanceTarget - distance ) * 0.05;
+
+	camera.position.x = distance * Math.sin( rotation.x ) * Math.cos( rotation.y );
+	camera.position.y = distance * Math.sin( rotation.y );
+	camera.position.z = distance * Math.cos( rotation.x ) * Math.cos( rotation.y );
+
+	/*
+	// Do not render if camera hasn't moved.
+
+	if ( vector.distanceTo( camera.position ) == 0 ) {
+
+		return;
+
+	}
+
+	vector.copy( camera.position );
+	*/
+
+	renderer.clear();
+	renderer.render( scene, camera );
+	//renderer.render( sceneAtmosphere, camera );
+}
+
+function onWindowResize( event ) {
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+function onDocumentMouseMove( event ) {
+
+	mouse.x = - event.clientX;
+	mouse.y = event.clientY;
+
+	target.x = targetOnDown.x + ( mouse.x - mouseOnDown.x ) * 0.005;
+	target.y = targetOnDown.y + ( mouse.y - mouseOnDown.y ) * 0.005;
+
+	target.y = target.y > PI_HALF ? PI_HALF : target.y;
+	target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
+
+}
+
+function onDocumentMouseUp( event ) {
+
+	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+	container.style.cursor = 'auto';
+
+}
+
+function onDocumentMouseOut( event ) {
+
+	document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+	document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+
+}
+
+function onDocumentMouseDown( event ) {
+
+	event.preventDefault();
+
+	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+	document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+
+	mouseOnDown.x = - event.clientX;
+	mouseOnDown.y = event.clientY;
+
+	targetOnDown.x = target.x;
+	targetOnDown.y = target.y;
+
+	container.style.cursor = 'move';
+
+}
+
 animate();
