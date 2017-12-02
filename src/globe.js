@@ -99,58 +99,36 @@ container = document.getElementById( 'container' );
 init();
 plotData();
 animate();
+
 function init() {
+
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 1, 10000 );
 
-	//renderer = new THREE.WebGLRenderer();
-	//renderer.setSize( window.innerWidth, window.innerHeight );
-
-
-	var geometry = new THREE.SphereGeometry( 200, 40, 30 );
+	var geometry = new THREE.SphereGeometry(200, 40, 30);
 	var shader = Shaders[ 'earth' ];
 	var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-	//var material  = new THREE.MeshPhongMaterial({ color: 0x00ff00 } )
 	material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
-	/*
-        uniforms['texture'].texture = new THREE.TextureLoader().load('world.jpg')
 
-        material = new THREE.RawShaderMaterial({
-
-            uniforms: uniforms,
-            vertexShader: shader.vertexShader,
-            fragmentShader: shader.fragmentShader
-
-        });
-	*/
 	material.map    = new THREE.TextureLoader().load('world.jpg')
 	earth = new THREE.Mesh( geometry, material );
 	scene.add( earth );
 
+	// geometry = new THREE.CubeGeometry( 0.75, 0.75, 1 );
+	// for ( var i = 0; i < geometry.vertices.length; i ++ ) {
+	// 	var vertex = geometry.vertices[ i ];
+	// 	vertex.z += 0.5;
+    //
+	// }
 
-	// point
-
-	geometry = new THREE.CubeGeometry( 0.75, 0.75, 1 );
-	for ( var i = 0; i < geometry.vertices.length; i ++ ) {
-		var vertex = geometry.vertices[ i ];
-		vertex.z += 0.5;
-
-	}
-
-	point = new THREE.Mesh( geometry );
+	// point = new THREE.Mesh( geometry );
 
 	pointsGeometry = new THREE.Geometry();
 
-	//
-
-
-	//console.log(distance)
 	camera.position.z = distanceTarget;
 
 	renderer = new THREE.WebGLRenderer( /* { antialias: false } */ );
-	//renderer.autoClear = false;
-	//renderer.setClearColor( 0x101010, 1.0 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	container.appendChild( renderer.domElement );
@@ -161,71 +139,73 @@ function init() {
 	window.addEventListener( 'resize', onWindowResize, false );
 
 }
+
 function animate() {
 
 	requestAnimationFrame( animate );
 	render();
-
 }
 
+
+function random_rgba() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+}
 
 function plotData() {
 
 	var lat, lng, size, color;
 
-	points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
+	var color = random_rgba();
+    // points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
 
-	for ( var i = 0, l = data.length; i < l; i ++ ) {
+	for (var i = 0, l = data.length; i < l; i++) {
 
-		lat = data[ i ][ 1 ];
-		lng = data[ i ][ 2 ];
-		size = data[ i ][ 0 ];
+		lat = data[i][1];
+		lng = data[i][2];
+		size = data[i][0];
 		color = new THREE.Color();
-		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 );//column color
+		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); //column color
 
-		addPoint( lat, lng, size * 150, color  );//column size
-
+		addPoint(lat, lng, size * 100, color); //column size
 	}
 
-	scene.add( points );
+    points = new THREE.Mesh(pointsGeometry, new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } ));
 
+    scene.add(points);
 }
 
-function addPoint( lat, lng, size, color ) {
+function addPoint(lat, lng, size, color) {
 
-	// if ( lat == 0 && lng == 0 ) return;
+    var phi = (90 - lat) * Math.PI / 180;
+    var theta = (0 - lng) * Math.PI / 180;
 
-	var phi = ( 90 - lat ) * Math.PI / 180;
-	var theta = ( 180 - lng ) * Math.PI / 180;
+    geometry = new THREE.CubeGeometry(0.75, 0.75, 1);
+    for (var i = 0; i < geometry.vertices.length; i++) {
+        var vertex = geometry.vertices[i];
+        vertex.z += 0.5;
+    }
 
-	// position
+    point = new THREE.Mesh(geometry);
 
-	point.x = 200 * Math.sin( phi ) * Math.cos( theta );
-	point.y = 200 * Math.cos( phi );
-	point.z = 200 * Math.sin( phi ) * Math.sin( theta );
+    // position
+	point.position.x = 200 * Math.sin(phi) * Math.cos(theta);
+	point.position.y = 200 * Math.cos(phi);
+	point.position.z = 200 * Math.sin(phi) * Math.sin(theta);
 
 	// rotation
-	point.lookAt( earth.position );
+	point.lookAt(earth.position);
 
 	// scaling
-
 	point.scale.z = size;
 	point.updateMatrix();
 
 	// color
-
-	for ( var i = 0; i < point.geometry.faces.length; i ++ ) {
-
-		point.geometry.faces[ i ].color = color;
-
+	for (var i = 0; i < point.geometry.faces.length; i++) {
+		point.geometry.faces[i].color = color;
 	}
 
-
 	pointsGeometry.merge(point.geometry, point.matrix);
-
-
-
-
 }
 
 function render() {
@@ -245,9 +225,7 @@ function render() {
 	// Do not render if camera hasn't moved.
 
 	if ( vector.distanceTo( camera.position ) == 0 ) {
-
 		return;
-
 	}
 
 	vector.copy( camera.position );
