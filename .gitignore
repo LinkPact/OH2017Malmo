@@ -1,0 +1,5 @@
+wikiglobe/
+.idea/
+*.log
+src/jakob_experiment/three.js-master/
+node_modules/
