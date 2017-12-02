@@ -83,6 +83,15 @@ function onDocumentMouseDown( event ) {
 
 function getPressedLocation(pressLoc, locationData) {
 
+    // var point = locationObjects[0];
+    // var color = new THREE.Color();
+    // color.setRGB(0.2, 0.5, 0.2);
+    // console.log(point);
+    // for (var i = 0; i < point.geometry.faces.length; i++) {
+    //     point.geometry.faces[i].color = color;
+    // }
+    // addPoint(pressLoc[0], pressLoc[1], 100, color);
+
     var pressRadius = 3;
 
     for(var i = 0; i < locationData.length; i++) {
