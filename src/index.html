@@ -26,10 +26,29 @@
                 padding: 40px;
             }
 
+            #project-title {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                font-size: 30px;
+                font-family: Candara;
+                line-height: 20px;
+                width: 300px;
+                padding: 40px;
+            }
+
             #info {
                 position: absolute;
                 top: 30px;
                 left: 0px;
+                width: 300px;
+                padding: 40px;
+            }
+
+            #project-info {
+                position: absolute;
+                top: 30px;
+                right: 0px;
                 width: 300px;
                 padding: 40px;
             }
@@ -46,17 +65,33 @@
                 color: #0080ff;
             }
         </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     </head>
     <body>
-
+		<script>
+			$(document).ready(function(){
+				$("#btn1").click(function(){
+					$("#project-title").text("Hello world!");
+				});
+			});
+		</script>
         <div id="container"></div>
         <div id="title">
-            World Elevation
+            Atlas of Torture
         </div>
         <div id="info">
             Powered by <a href="http://www.chromeexperiments.com/globe/">WebGL Globe</a><br />
             Data from <a href="http://resources.arcgis.com/en/help/main/10.1/009t/009t00000244000000.htm">Esri</a> processed by <a href="http://newnaw.com">diligentpig</a><br />
-            Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License</a>
+            Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License</a><br>
+			<button id="btn1">Set Text</button>
+        </div>
+
+        <div id="project-title">Bim</div>
+        <div id="project-info">
+            #humanrights #torture<br>
+            Location: Moroco<br>
+            Active: 05/2015 - 07/2017<br>
+            Homepage: link
         </div>
 
         <script type="text/javascript" src="js/RequestAnimationFrame.js"></script>
