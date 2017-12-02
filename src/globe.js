@@ -38,11 +38,6 @@ function init() {
 	earth = new THREE.Mesh( geometry, material );
 	scene.add( earth );
 
-	var wireMaterial  = new THREE.MeshPhongMaterial({wireframe: true, transparent: true});
-	var wireFrame = new THREE.Mesh(new THREE.SphereGeometry(201, segments, segments), wireMaterial);
-	wireFrame.rotation.y = Math.PI;
-	scene.add(wireFrame)
-
 	pointsGeometry = new THREE.Geometry();
 
 	camera.position.z = distanceTarget;
