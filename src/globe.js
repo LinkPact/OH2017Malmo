@@ -85,22 +85,35 @@ function init() {
 
 	shader = Shaders['earth'];
     uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-    /*
-	var texture   = new THREE.TextureLoader().load('night.jpg')
+
+
+	var texture   = new THREE.TextureLoader().load('images/night.jpg')
 	material = new THREE.ShaderMaterial({  
 	  uniforms: {"texture": { type: "t", value: texture }},
 	  vertexShader: shader.vertexShader,
       fragmentShader: shader.fragmentShader
-	});*/
+      //lights: true
+	});
 
 	var ballMat = new THREE.MeshStandardMaterial( {
 					color: 0xffffff,
 					roughness: 0.8,
-					metalness: 0.15
+					metalness: 0.05
 				});
-	ballMat.map = new THREE.TextureLoader().load( "night.jpg");
+	ballMat.map = new THREE.TextureLoader().load( "images/night.jpg");
 	ballMat.needsUpdate = true;
-	earth = new THREE.Mesh( geometry, ballMat );
+
+	var material = new THREE.MeshPhongMaterial();
+
+    //material.specular = new THREE.Color('grey'),
+    material.shininess =  0.00
+
+    material.map = new THREE.TextureLoader().load( "images/night.jpg");
+    material.normalMap = new THREE.TextureLoader().load( "images/EarthNormal.png");
+    //material.specularMap = new THREE.TextureLoader().load( 'images/EarthSpec.png');
+    material.normalScale.set(3,3)
+	material.needsUpdate = true;
+	earth = new THREE.Mesh( geometry, material );
 	scene.add( earth );
 
 	shader = Shaders['atmosphere'];
@@ -120,8 +133,8 @@ function init() {
 	mesh.scale.set( 1.1, 1.1, 1.1 );
 	scene.add(mesh);
 
-	var light = new THREE.AmbientLight( 0xffffff ); // soft white light
-	//scene.add( light );
+	var light = new THREE.AmbientLight( 0x909090, 1 ); // soft white light
+	scene.add( light );
 
 	pointsGeometry = new THREE.Geometry();
 
@@ -180,10 +193,15 @@ function plotData() {
 
 	var lat, lng, size, color;
 
-	var color = 0xffff90;
+	var color = 0xffffff;
     // points = new THREE.Mesh( pointsGeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
 
-    points = new THREE.Mesh(pointsGeometry, new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } ));
+    var pointMaterial = new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } )
+
+    pointMaterial.transparent = true;
+    pointMaterial.opacity = 0.5
+
+    points = new THREE.Mesh(pointsGeometry, pointMaterial);
 
     for (var i = 0, l = data.length; i < l; i++) {
 
@@ -192,7 +210,7 @@ function plotData() {
 		color = new THREE.Color();
 		color.setHSL( ( 0.6 - ( size * 1.6 ) ), 1.0, 1.0 ); // column color
 
-		let point = addPoint(lat, lng, 20, color); // column size
+		let point = addPoint(lat, lng, 7, color); // column size
 		locationObjects.push(point);
 	}
 
@@ -226,9 +244,9 @@ function addPoint(lat, lng, size, color) {
 	point.position.y = globeRadius * Math.cos(phi);
 	point.position.z = globeRadius * Math.sin(phi) * Math.sin(theta);
 
-	var light = new THREE.PointLight( 0xffffff, 13, 155 );
-	light.position.set( 205 * Math.sin(phi) * Math.cos(theta),
-	  205 * Math.cos(phi), 205 * Math.sin(phi) * Math.sin(theta));
+	var light = new THREE.PointLight( 0xffffff, 6, 50, 1 );
+	light.position.set( 215 * Math.sin(phi) * Math.cos(theta),
+	  215 * Math.cos(phi), 215 * Math.sin(phi) * Math.sin(theta));
 	scene.add( light );
     pointLights.push(light);
 
@@ -246,7 +264,7 @@ function addPoint(lat, lng, size, color) {
 		point.geometry.faces[i].color = color;
 	}
 
-	//pointsGeometry.merge(point.geometry, point.matrix);
+	pointsGeometry.merge(point.geometry, point.matrix);
 
 	return(point);
 }
