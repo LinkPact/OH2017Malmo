@@ -123,6 +123,8 @@ function init() {
 
 	camera.position.z = distanceTarget;
 
+	setupCameraRotation();
+
 	renderer = new THREE.WebGLRenderer(  { alpha: true }  );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -133,6 +135,35 @@ function init() {
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
+}
+
+function setupCameraRotation() {
+
+    var url = new URL(window.location);
+    console.log("URL:" + url);
+
+    // url_keys = url.searchParams.keys();
+    // for (var key in url_keys) {
+    	// console.log(key);
+	// }
+
+    var rotation_x = url.searchParams.get("x");
+    var rotation_y = url.searchParams.get("y");
+
+    if (rotation_x != null) {
+        console.log(rotation_x);
+        console.log(rotation_y);
+        rotation.x = parseFloat(rotation_x);
+        rotation.y = parseFloat(rotation_y);
+        // rotation.x = 0;
+		target.x = rotation.x;
+		target.y = rotation.y;
+        // rotation.y = 0;
+		distance = distanceTarget;
+	}
+	else {
+    	console.log("No recorded rotation!");
+	}
 }
 
 function animate() {
@@ -268,4 +299,29 @@ function updateProjectInfo(locationEntry) {
     $("#project-location").text(location_name);
     $("#project-time").text(startTime + " " + endTime);
     $("#project-page").html("<a href=\"" + pageURL + "\">Project Page</a>");
+}
+
+function makePositionURL() {
+
+	console.log("makePositionURL");
+
+
+        // ?client=ubuntu&channel=fs&q=j
+
+    // var url = new URL(window.location);
+    var url = window.location.href.split('?')[0].split('#')[0];
+
+    console.log(url.href);
+    console.log("Camera rotation:", rotation.x, rotation.y);
+
+    var url_string = url + "?x=" + rotation.x + "&y=" + rotation.y;
+	console.log(url_string);
+
+	$("#share-url").text(url_string);
+
+    // var color = url.searchParams.get("c");
+    // console.log(color);
+    //
+    // if(color == null) {color = '00ff00';}
+
 }

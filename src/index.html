@@ -59,7 +59,7 @@
 
             #project-tags {
                 padding-bottom: 3rem;
-                border-bottom: solid 1px grey;
+                /*border-bottom: solid 1px grey;*/
                 font-size: 0.8rem;
                 color: #ff1a1a;
             }
@@ -70,14 +70,18 @@
 
             #project-time {
                 padding-bottom: 3rem;
-                border-bottom: solid 1px grey;
             }
 
             #project-page {
                 padding-top: 0.4rem;
+                border-bottom: solid 1px grey;
             }
 
             #share-buttons {
+                padding-top: 0.4rem;
+            }
+
+            #share-url {
                 padding-top: 0.4rem;
             }
 
@@ -110,8 +114,17 @@
                 <a href="http://bim.lbg.ac.at/en">Project Page</a>
             </div>
             <div id="share-buttons">
-                <img src="images/share_buttons_trimmed.png" width="170">
+                <!--<img src="images/share_buttons_trimmed.png" width="170">-->
+
+                <a onclick="makePositionURL()" href="#"><img src="images/share_buttons_trimmed.png"
+                                width="170" title="Share buttons" alt="Share butons"></a>
+
+                <!--onclick="jsfunction()" href="#"-->
             </div>
+            <div id="share-url">
+                SHARE URL
+            </div>
+
         </div>
 
         <script type="text/javascript" src="js/RequestAnimationFrame.js"></script>
