@@ -344,7 +344,8 @@ function makePositionURL() {
     var url_string = url + "?x=" + rotation.x + "&y=" + rotation.y + "&project=" + currentlyActiveProjectIndex;
 	console.log(url_string);
 
-	$("#share-url").html("<a href=\"" + url_string + "\">Share link</a>");
+	$("#share-url").html("<a href=\"" + url_string + "\">" + url_string + "</a>");
+    // $("#share-url").html("<a href=\"" + url_string + "\">Share link</a>");
     // $("#share-url").text(url_string);
 
 }
