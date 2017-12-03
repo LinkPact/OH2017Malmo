@@ -133,7 +133,7 @@ function init() {
 	mesh.scale.set( 1.1, 1.1, 1.1 );
 	scene.add(mesh);
 
-	var light = new THREE.AmbientLight( 0x909090, 1 ); // soft white light
+	var light = new THREE.AmbientLight( 0x909090, 2 ); // soft white light
 	scene.add( light );
 
 	pointsGeometry = new THREE.Geometry();
