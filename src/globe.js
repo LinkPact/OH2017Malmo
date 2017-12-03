@@ -81,7 +81,7 @@ function init() {
 	scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 1, 10000 );
 
-	var geometry = new THREE.SphereGeometry(200, 40, 30);
+	var geometry = new THREE.SphereGeometry(200, 50, 40);
 
 	shader = Shaders['earth'];
     uniforms = THREE.UniformsUtils.clone(shader.uniforms);
@@ -199,7 +199,7 @@ function plotData() {
     var pointMaterial = new THREE.MeshBasicMaterial( { color: color, vertexColors: THREE.FaceColors } )
 
     pointMaterial.transparent = true;
-    pointMaterial.opacity = 0.5
+    pointMaterial.opacity = 0.8
 
     points = new THREE.Mesh(pointsGeometry, pointMaterial);
 
