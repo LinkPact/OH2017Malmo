@@ -17,9 +17,7 @@ function onDocumentMouseMove( event ) {
 
     target.y = target.y > PI_HALF ? PI_HALF : target.y;
     target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
-
 }
-
 
 
 function onDocumentMouseUp( event ) {
@@ -95,8 +93,16 @@ function getPressedLocation(pressLoc, locationData) {
         var locPos = [location["latLong"]["lat"], location["latLong"]["long"]];
 
         if (isPointInRange(pressLoc, locPos, pressRadius)) {
+
+            // var color = new THREE.Color();
+            // color.setRGB(0x000000);
+            // pointLights[i].color = color;
+
             return(location);
         }
+        // else {
+        //
+        // }
     }
     return(null);
 }

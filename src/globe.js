@@ -63,7 +63,8 @@ var PI_HALF = Math.PI / 2;
 var raycaster = new THREE.Raycaster();
 var mouseVector = new THREE.Vector2();
 
-let locationObjects = [];
+var locationObjects = [];
+var pointLights = [];
 
 container = document.getElementById( 'container' );
 
@@ -141,7 +142,7 @@ function animate() {
 }
 
 
-function random_rgba() {
+function randomRgba() {
     var o = Math.round, r = Math.random, s = 255;
     return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
 }
@@ -189,15 +190,20 @@ function addPoint(lat, lng, size, color) {
 
     point = new THREE.Mesh(geometry);
 
+    var globeRadius = 200;
+
     // position
-	point.position.x = 200 * Math.sin(phi) * Math.cos(theta);
-	point.position.y = 200 * Math.cos(phi);
-	point.position.z = 200 * Math.sin(phi) * Math.sin(theta);
+	point.position.x = globeRadius * Math.sin(phi) * Math.cos(theta);
+	point.position.y = globeRadius * Math.cos(phi);
+	point.position.z = globeRadius * Math.sin(phi) * Math.sin(theta);
 
 	var light = new THREE.PointLight( 0xffffff, 13, 155 );
-	light.position.set( 205 * Math.sin(phi) * Math.cos(theta),
-	 205 * Math.cos(phi), 205 * Math.sin(phi) * Math.sin(theta));
-	scene.add( light );
+	light.position.set(
+		(globeRadius + 5) * Math.sin(phi) * Math.cos(theta),
+		(globeRadius + 5) * Math.cos(phi),
+		(globeRadius + 5) * Math.sin(phi) * Math.sin(theta));
+	scene.add(light);
+	pointLights.push(light);
 
 	// rotation
 	point.lookAt(earth.position);

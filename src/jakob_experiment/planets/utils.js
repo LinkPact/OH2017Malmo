@@ -96,7 +96,7 @@ addData = function(data, opts) {
 function createPoints() {
     if (this._baseGeometry !== undefined) {
         let points = new THREE.Mesh(this._baseGeometry, new THREE.MeshBasicMaterial({
-            color: 0xff0000,
+            color: 0x00ff00,
             vertexColors: THREE.FaceColors,
             morphTargets: false
         }));
