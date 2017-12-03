@@ -66,6 +66,8 @@ var mouseVector = new THREE.Vector2();
 var locationObjects = [];
 var pointLights = [];
 
+var rotateEnabled = true;
+
 var currentlyActiveProjectIndex;
 
 container = document.getElementById( 'container' );
@@ -142,21 +144,17 @@ function init() {
 function loadSetupFromURL() {
 
     var url = new URL(window.location);
-    console.log("URL:" + url);
-
     var rotationX = url.searchParams.get("x");
     var rotationY = url.searchParams.get("y");
     var shareLoc = url.searchParams.get("project");
 
     if (rotationX != null && rotationY != null && shareLoc != null) {
-        console.log(rotationX);
-        console.log(rotationY);
         rotation.x = parseFloat(rotationX);
         rotation.y = parseFloat(rotationY);
 		target.x = rotation.x;
 		target.y = rotation.y;
-		distance = distanceTarget;
 		currentlyActiveProjectIndex = parseInt(shareLoc);
+		rotateEnabled = false;
 
 		updateProjectInfo(data[currentlyActiveProjectIndex])
 	}
@@ -255,8 +253,10 @@ function addPoint(lat, lng, size, color) {
 
 function render() {
 
-	target.x += incr_rotation.x;
-    target.y += incr_rotation.y;
+	if (rotateEnabled) {
+        target.x += incr_rotation.x;
+        target.y += incr_rotation.y;
+	}
 
 	rotation.x += ( target.x - rotation.x ) * 0.05;
 	rotation.y += ( target.y - rotation.y ) * 0.05;
@@ -296,6 +296,9 @@ function updateProjectInfo(locationEntry) {
     $("#project-location").text(location_name);
     $("#project-time").text(startTime + " " + endTime);
     $("#project-page").html("<a href=\"" + pageURL + "\">Project Page</a>");
+
+    $("#share-buttons").show();
+    $("#share-url").show();
 }
 
 function emptyProjectInfo() {
@@ -304,6 +307,8 @@ function emptyProjectInfo() {
     $("#project-location").text("");
     $("#project-time").text("");
     $("#project-page").html("");
+    $("#share-buttons").hide();
+    $("#share-url").hide();
 }
 
 function makePositionURL() {
