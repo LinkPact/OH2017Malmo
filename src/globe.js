@@ -303,6 +303,7 @@ function updateProjectInfo(locationEntry) {
 
 	var title = locationEntry["title"];
 	var tags = locationEntry["focus"];
+	tags = '#' + tags.map(function(d){return d.replace(/ /g, '-')}).join(' #')
 	var location_name = locationEntry["country"];
 	var startTime = locationEntry["startDate"];
 	var endTime = locationEntry["endDate"];
