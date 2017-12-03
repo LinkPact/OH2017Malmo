@@ -91,7 +91,7 @@ function init() {
 	var ballMat = new THREE.MeshStandardMaterial( {
 					color: 0xffffff,
 					roughness: 0.8,
-					metalness: 0.05
+					metalness: 0.15
 				});
 	ballMat.map = new THREE.TextureLoader().load( "night.jpg");
 	ballMat.needsUpdate = true;
@@ -115,8 +115,8 @@ function init() {
 	mesh.scale.set( 1.1, 1.1, 1.1 );
 	scene.add(mesh);
 
-	var light = new THREE.AmbientLight( 0x909090 ); // soft white light
-	scene.add( light );
+	var light = new THREE.AmbientLight( 0xffffff ); // soft white light
+	//scene.add( light );
 
 	pointsGeometry = new THREE.Geometry();
 
@@ -128,7 +128,7 @@ function init() {
 	container.appendChild( renderer.domElement );
 
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-	document.addEventListener( 'mousewheel', onDocumentMouseWheel, false );
+	document.addEventListener( 'wheel', onDocumentMouseWheel, false );
 
 	window.addEventListener( 'resize', onWindowResize, false );
 
@@ -196,7 +196,7 @@ function addPoint(lat, lng, size, color) {
 
 	var light = new THREE.PointLight( 0xffffff, 13, 155 );
 	light.position.set( 205 * Math.sin(phi) * Math.cos(theta),
-	 205 * Math.cos(phi), 205 * Math.sin(phi) * Math.sin(theta));
+	  205 * Math.cos(phi), 205 * Math.sin(phi) * Math.sin(theta));
 	scene.add( light );
 
 	// rotation
