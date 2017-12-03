@@ -97,6 +97,8 @@ function getPressedLocation(pressLoc, locationData) {
             // var color = new THREE.Color();
             // color.setRGB(0x000000);
             // pointLights[i].color = color;
+            currentlyActiveProjectIndex = i;
+            console.log("Assigning projind:" + currentlyActiveProjectIndex);
 
             return(location);
         }

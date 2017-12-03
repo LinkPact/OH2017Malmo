@@ -66,6 +66,8 @@ var mouseVector = new THREE.Vector2();
 var locationObjects = [];
 var pointLights = [];
 
+var currentlyActiveProjectIndex;
+
 container = document.getElementById( 'container' );
 
 init();
@@ -123,7 +125,7 @@ function init() {
 
 	camera.position.z = distanceTarget;
 
-	setupCameraRotation();
+	loadSetupFromURL();
 
 	renderer = new THREE.WebGLRenderer(  { alpha: true }  );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -137,32 +139,30 @@ function init() {
 
 }
 
-function setupCameraRotation() {
+function loadSetupFromURL() {
 
     var url = new URL(window.location);
     console.log("URL:" + url);
 
-    // url_keys = url.searchParams.keys();
-    // for (var key in url_keys) {
-    	// console.log(key);
-	// }
+    var rotationX = url.searchParams.get("x");
+    var rotationY = url.searchParams.get("y");
+    var shareLoc = url.searchParams.get("project");
 
-    var rotation_x = url.searchParams.get("x");
-    var rotation_y = url.searchParams.get("y");
-
-    if (rotation_x != null) {
-        console.log(rotation_x);
-        console.log(rotation_y);
-        rotation.x = parseFloat(rotation_x);
-        rotation.y = parseFloat(rotation_y);
-        // rotation.x = 0;
+    if (rotationX != null && rotationY != null && shareLoc != null) {
+        console.log(rotationX);
+        console.log(rotationY);
+        rotation.x = parseFloat(rotationX);
+        rotation.y = parseFloat(rotationY);
 		target.x = rotation.x;
 		target.y = rotation.y;
-        // rotation.y = 0;
 		distance = distanceTarget;
+		currentlyActiveProjectIndex = parseInt(shareLoc);
+
+		updateProjectInfo(data[currentlyActiveProjectIndex])
 	}
 	else {
     	console.log("No recorded rotation!");
+    	emptyProjectInfo();
 	}
 }
 
@@ -259,7 +259,6 @@ function render() {
     target.y += incr_rotation.y;
 
 	rotation.x += ( target.x - rotation.x ) * 0.05;
-
 	rotation.y += ( target.y - rotation.y ) * 0.05;
 	distance += ( distanceTarget - distance ) * 0.05;
 
@@ -271,11 +270,9 @@ function render() {
 
 	/*
 	// Do not render if camera hasn't moved.
-
 	if ( vector.distanceTo( camera.position ) == 0 ) {
 		return;
 	}
-
 	vector.copy( camera.position );
 	*/
 
@@ -301,27 +298,29 @@ function updateProjectInfo(locationEntry) {
     $("#project-page").html("<a href=\"" + pageURL + "\">Project Page</a>");
 }
 
+function emptyProjectInfo() {
+    $("#project-title").text("");
+    $("#project-tags").text("");
+    $("#project-location").text("");
+    $("#project-time").text("");
+    $("#project-page").html("");
+}
+
 function makePositionURL() {
 
 	console.log("makePositionURL");
 
-
-        // ?client=ubuntu&channel=fs&q=j
-
+	// ?client=ubuntu&channel=fs&q=j
     // var url = new URL(window.location);
     var url = window.location.href.split('?')[0].split('#')[0];
 
     console.log(url.href);
     console.log("Camera rotation:", rotation.x, rotation.y);
 
-    var url_string = url + "?x=" + rotation.x + "&y=" + rotation.y;
+    var url_string = url + "?x=" + rotation.x + "&y=" + rotation.y + "&project=" + currentlyActiveProjectIndex;
 	console.log(url_string);
 
-	$("#share-url").text(url_string);
-
-    // var color = url.searchParams.get("c");
-    // console.log(color);
-    //
-    // if(color == null) {color = '00ff00';}
+	$("#share-url").html("<a href=\"" + url_string + "\">Share link</a>");
+    // $("#share-url").text(url_string);
 
 }
