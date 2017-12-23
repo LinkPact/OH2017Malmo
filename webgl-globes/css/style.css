@@ -1,0 +1,47 @@
+body, html {
+  background-color: #333;
+  margin: 0px;
+  font-family: helvetica, arial;
+  color: #333;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#info {
+  color: white;
+  position: absolute;
+  padding: 15px;
+  left: 25px;
+  top: 25px;
+  z-index: 1;
+}
+
+#msg {
+  font: 40px helvetica, arial;
+}
+
+#info h3 {
+  margin: 1px;
+}
+
+#loading {
+  color: white;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+#link {
+  position: absolute;
+  bottom: 10px;
+  left: 0px;
+}
