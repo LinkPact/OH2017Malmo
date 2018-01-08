@@ -44,17 +44,26 @@ export function convertToXYZ(point, radius) {
 
 export var geodecoder = function (features) {
 
+  console.log("Within geodecoder");
+
   let store = {};
 
   for (let i = 0; i < features.length; i++) {
     store[features[i].id] = features[i];
   }
 
+  console.log("Geodecoder call");
+
   return {
     find: function (id) {
+
+      console.log("Geodecoder find");
+
       return store[id];
     },
     search: function (lat, lng) {
+
+      console.log("Geodecoder search");
 
       let match = false;
 
@@ -65,9 +74,11 @@ export var geodecoder = function (features) {
         if(country.geometry.type === 'Polygon') {
           match = pointInPolygon(country.geometry.coordinates[0], [lng, lat]);
           if (match) {
+            console.log(features);
             return {
               code: features[i].id,
-              name: features[i].properties.name
+              name: features[i].properties.name,
+              value: features[i].value
             };
           }
         } else if (country.geometry.type === 'MultiPolygon') {
@@ -75,9 +86,11 @@ export var geodecoder = function (features) {
           for (let j = 0; j < coords.length; j++) {
             match = pointInPolygon(coords[j][0], [lng, lat]);
             if (match) {
+              console.log(features);
               return {
                 code: features[i].id,
-                name: features[i].properties.name
+                name: features[i].properties.name,
+                value: features[i].value
               };
             }
           }

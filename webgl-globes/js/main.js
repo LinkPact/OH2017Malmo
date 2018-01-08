@@ -9,7 +9,7 @@ import d3 from 'd3';
 
 console.log(topojson.pi);
 
-d3.json('data/world.json', function (err, data) {
+d3.json('data/annotated_world.json', function (err, data) {
 
   d3.select("#loading").transition().duration(500)
     .style("opacity", 0).remove();
@@ -36,7 +36,10 @@ d3.json('data/world.json', function (err, data) {
   baseGlobe.addEventListener('mousemove', onGlobeMousemove);
 
   // add base map layer with all countries
+  // let worldTexture = mapTexture(countries, '#00ff00');
+
   let worldTexture = mapTexture(countries, '#647089');
+
   let mapMaterial  = new THREE.MeshPhongMaterial({map: worldTexture, transparent: true});
   var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
   baseMap.rotation.y = Math.PI;
