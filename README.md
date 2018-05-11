@@ -64,8 +64,6 @@ follows the outline:
 * `emptyProjectInfo()` clears out the fields so that no data is shown
 * `makePositionURL()` used to generate URL which can be used to view particular site
 
-## Updating the data
-
 ## Debugging
 
 If something goes wrong, you can often get hits about it by navigating to the browser terminal.
